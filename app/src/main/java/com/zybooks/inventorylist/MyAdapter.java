@@ -1,6 +1,7 @@
 package com.zybooks.inventorylist;
 
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.w3c.dom.Text;
@@ -31,13 +34,17 @@ import java.util.ArrayList;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
+
+
 public class MyAdapter extends BaseAdapter implements ListAdapter {
 
     Context context;
     ArrayList<item>arrayList;
     DatabaseHelper db;
     String deleteItem;
-    Button deleteButton;
+    ImageButton deleteButton;
+
+    private NotificationManagerCompat notificationManager;
 
     public MyAdapter(Context context, ArrayList<item> arrayList){
         this.context = context;
@@ -65,25 +72,22 @@ public class MyAdapter extends BaseAdapter implements ListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
+        notificationManager = NotificationManagerCompat.from(context);
 
 
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.mycustomlistview,null);
 
-        TextView t1_id = (TextView)convertView.findViewById(R.id.id_txt);
         TextView t2_name = (TextView)convertView.findViewById(R.id.name_txt);
         TextView t3_age = (TextView)convertView.findViewById(R.id.qty_txt);
 
-        deleteButton = (Button)convertView.findViewById(R.id.button_delete);
+        deleteButton = (ImageButton) convertView.findViewById(R.id.button_delete);
         //deleteButton.setVisibility(convertView.INVISIBLE);
 
         db = new DatabaseHelper(context.getApplicationContext());
 
-
         item Item = arrayList.get(position);
 
-        t1_id.setText(String.valueOf(Item.getId()));
         t2_name.setText(Item.getName());
         t3_age.setText((Item.getQty()));
 
@@ -92,9 +96,9 @@ public class MyAdapter extends BaseAdapter implements ListAdapter {
 
         deleteItem = t2_name.getText().toString();
 
-        Button buttonDecreaseQty = (Button) convertView.findViewById(R.id.button_decrease);
+        ImageButton buttonDecreaseQty = (ImageButton) convertView.findViewById(R.id.button_decrease);
 
-        Button buttonAddQty = (Button)convertView.findViewById(R.id.button_Increase);
+        ImageButton buttonAddQty = (ImageButton) convertView.findViewById(R.id.button_Increase);
 
         deleteButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -129,7 +133,18 @@ public class MyAdapter extends BaseAdapter implements ListAdapter {
                     db.QTYupdate(Item.getId(), Integer.toString(QtyInt));
                 }
                 if(QtyInt< 5){
-                    alertBox(Item.getName(),QtyInt);
+                    String item_low = "Running low on " + Item.getName() +".\nQuantity amount of " + QtyInt;
+                    String item_out = Item.getName() +" OUT OF STOCK.\nOrder more now!";
+                    String item_notify = "Error.";
+                    if(QtyInt < 5){
+                        item_notify = item_low;
+                    }
+                    if(QtyInt == 0){
+                        item_notify = item_out;
+                    }
+                    if(ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) != -1){
+                        sendOnChannel1(item_notify,QtyInt);
+                    }
                 }
                 t3_age.setText(String.valueOf(QtyInt));
             }
@@ -155,12 +170,27 @@ public class MyAdapter extends BaseAdapter implements ListAdapter {
         });
         return convertView;
     }
+    //WORK IN PROGRESS
     public void hideDeleteButton(){
 
         deleteButton.setVisibility(View.INVISIBLE);
     }
 
+    public void sendOnChannel1(String msg, int qty){
 
+
+        Notification notification = new NotificationCompat.Builder(context, com.zybooks.inventorylist.notification.CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_one)
+                .setContentTitle("UPDATE")
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+        notificationManager.notify(1,notification);
+    }
+
+
+    //user for some other time.
     public void alertBox(String item, int qty){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 

@@ -42,10 +42,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
             //1 = id, 2 = name, 3 = quantity
             if(user_name.equals(cursor.getString(1)) && user_pw.equals(cursor.getString(2))){
                 choice = true;
-                Log.d("match","true");
+                //Log.d("match","true");
             }
 
-            Log.d("user","\tID: " + cursor.getString(0) + "\tname: " + cursor.getString(1) + "\tpw: " + cursor.getString(2));
+            //Log.d("user","\tID: " + cursor.getString(0) + "\tname: " + cursor.getString(1) + "\tpw: " + cursor.getString(2));
         }
         return choice;
     }
@@ -59,7 +59,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
         while(cursor.moveToNext()){
             if(user_name.equals(cursor.getString(1))){
                 choice = true;
-                Log.d("match","true");
+                //Log.d("match","true");
             }
         }
         return choice;
@@ -119,7 +119,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
         DB.update("ListInfo",ContentValues,"ID=?",new String[]{Integer.toString(user_id)});
 
-        Log.d("ID found: ", "user ID: " + user_id + "\n QTY: " + QTY);
+        //Log.d("ID found: ", "user ID: " + user_id + "\n QTY: " + QTY);
     }
 
     public ArrayList<item> getAllData(){

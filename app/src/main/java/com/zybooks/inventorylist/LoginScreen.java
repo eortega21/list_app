@@ -54,11 +54,10 @@ public class LoginScreen extends AppCompatActivity {
 
         if(user_exist) {
             userName.setText("");
-            Toast.makeText(this, "User Exist", Toast.LENGTH_SHORT).show();
             login();
         }
         else{
-            Toast.makeText(this, "No exist, please register" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, user_name +" does not exist, please register" , Toast.LENGTH_SHORT).show();
         }
 
 
@@ -92,7 +91,7 @@ public class LoginScreen extends AppCompatActivity {
     }
     public boolean userNameExist(String userName){
         boolean checkUser = db.checkUserExist(userName);
-        if(checkUser){
+        if(checkUser || userName.equals("")){
             Toast.makeText(this, "Username Exist" , Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -103,12 +102,16 @@ public class LoginScreen extends AppCompatActivity {
 
     public boolean confirmPWmatch(String pw, String cpw){
         boolean pw_match = false;
-        if(pw.equals(cpw)){
-            pw_match = true;
+        if(!pw.equals("")) {
+            if (pw.equals(cpw)) {
+                pw_match = true;
+            } else {
+                pw_match = false;
+                Toast.makeText(this, "Password Mismatch", Toast.LENGTH_SHORT).show();
+            }
         }
-        else{
-            pw_match = false;
-            Toast.makeText(this, "Password Mismatch" , Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(this, "Password Mismatch", Toast.LENGTH_SHORT).show();
         }
         return pw_match;
     }

@@ -1,17 +1,17 @@
 package com.zybooks.inventorylist;
 
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     MyAdapter myAdapter;
     Button alert;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("custom-message"));
+
     }
 
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String ItemName = intent.getStringExtra("id");
-            Toast.makeText(MainActivity.this,"ID: " + ItemName,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,"ID: " + ItemName,Toast.LENGTH_SHORT).show();
             loadDataInListView();
         }
     };
@@ -104,10 +106,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.action_one:
-                Toast.makeText(MainActivity.this, "edit later",Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(MainActivity.this, "edit later",Toast.LENGTH_SHORT).show();
                 //myAdapter.hideDeleteButton();
-
                 myAdapter.notifyDataSetChanged();
                 break;
 
